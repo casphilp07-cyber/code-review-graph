@@ -1,259 +1,208 @@
 <p align="center">
-  <img src="docs/assets/banner.jpg" alt="code-review-graph banner" width="100%" />
+  <img src="docs/assets/banner.jpg" alt="code-review-graph" width="100%" />
 </p>
 
-# code-review-graph
+<h1 align="center">code-review-graph</h1>
 
-**Persistent incremental knowledge graph for token-efficient, context-aware code reviews with Claude Code.**
+<p align="center">
+<strong>Give Claude a map of your codebase so it stops reading every file.</strong>
+</p>
 
-[![GitHub stars](https://img.shields.io/github/stars/tirth8205/code-review-graph?style=flat-square)](https://github.com/tirth8205/code-review-graph/stargazers)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/tirth8205/code-review-graph/actions/workflows/ci.yml/badge.svg)](https://github.com/tirth8205/code-review-graph/actions/workflows/ci.yml)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg?style=flat-square)](https://www.python.org/)
-[![MCP](https://img.shields.io/badge/MCP-compatible-green.svg?style=flat-square)](https://modelcontextprotocol.io/)
-[![v1.6.4](https://img.shields.io/badge/version-1.6.4-purple.svg?style=flat-square)](#)
-
----
-
-> It turns Claude from "smart but forgetful tourist" into "local expert who already knows the map."
-
-Stop re-scanning your entire codebase on every review. `code-review-graph` builds a structural graph of your code using Tree-sitter, tracks it incrementally, and gives Claude Code the context it needs to review only what changed — and everything affected by those changes.
-
-| Without graph | With graph |
-|---|---|
-| Full repo scan every review | Only changed + impacted files |
-| No blast-radius awareness | Automatic impact analysis |
-| Token-heavy (entire codebase) | **5-10x fewer tokens** per review |
-| Manual "what else does this affect?" | Graph-powered dependency tracing |
-
-## Features
-
-- **Incremental updates** — Only re-parses files that changed since last build. Subsequent updates take <2s.
-- **12+ languages** — Python, TypeScript, JavaScript, Go, Rust, Java, C#, Ruby, Kotlin, Swift, PHP, C/C++
-- **Blast-radius analysis** — See exactly which functions, classes, and files are impacted by any change
-- **Token-efficient reviews** — Send only changed + impacted code to the model, not your entire repo
-- **Auto-update hooks** — Graph stays current on every file edit and git commit
-- **Vector embeddings** — Optional semantic search across your codebase with sentence-transformers
-- **Interactive visualization** — Collapsible, searchable HTML graph with edge-type toggles
-- **Watch mode** — Real-time graph updates as you code
-
-For the full feature list and changelog, see [docs/FEATURES.md](docs/FEATURES.md).
+<p align="center">
+  <a href="https://github.com/tirth8205/code-review-graph/stargazers"><img src="https://img.shields.io/github/stars/tirth8205/code-review-graph?style=flat-square" alt="Stars"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="MIT License"></a>
+  <a href="https://github.com/tirth8205/code-review-graph/actions/workflows/ci.yml"><img src="https://github.com/tirth8205/code-review-graph/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg?style=flat-square" alt="Python 3.10+"></a>
+  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-compatible-green.svg?style=flat-square" alt="MCP"></a>
+  <a href="#"><img src="https://img.shields.io/badge/version-1.7.0-purple.svg?style=flat-square" alt="v1.7.0"></a>
+</p>
 
 ---
 
-## 🚀 Quick Start
+Claude Code is powerful, but it wastes tokens re-reading your entire codebase on every review and every coding task. `code-review-graph` builds a structural map of your code using [Tree-sitter](https://tree-sitter.github.io/tree-sitter/), tracks it incrementally, and tells Claude exactly which files matter — so it reads 5 files instead of 500.
 
-### Install as a Claude Code Plugin (Recommended)
+Benchmarked on real open-source repos: **6.8x fewer tokens for code reviews, up to 49x fewer tokens for coding tasks.**
+
+---
+
+## Install in 45 Seconds
+
+### Option A: Claude Code Plugin (recommended)
 
 ```bash
 claude plugin add tirth8205/code-review-graph
 ```
 
-That's it. Claude Code will handle installation and MCP server setup automatically. Restart Claude Code to activate.
+Restart Claude Code. Done.
 
-### Install via pip
-
-If you prefer a manual setup or want to use the CLI tools directly:
+### Option B: pip
 
 ```bash
-pip install code-review-graph
-code-review-graph init    # Set up .mcp.json for Claude Code
+pip install git+https://github.com/tirth8205/code-review-graph.git
+code-review-graph install
 ```
 
-Requires Python 3.10+ and [`uv`](https://docs.astral.sh/uv/) (the `init` command generates a `uvx`-based MCP config). Install `uv` with `pip install uv` or `brew install uv`.
+This creates a `.mcp.json` file in your project that tells Claude Code where to find the MCP server. Restart Claude Code to activate.
 
-With semantic search (optional):
+> Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/). Install uv with `pip install uv` or `brew install uv`.
 
-```bash
-pip install code-review-graph[embeddings]
+---
+
+## First Time in a Project
+
+After installing, open your project in Claude Code and say:
+
 ```
+Build the code review graph for this project
+```
+
+That's it. Takes about 10 seconds for a 500-file project. After that, the graph updates automatically whenever you edit files or make commits — you never need to think about it again.
+
+---
+
+## How It Works (for Normal People)
+
+```
+Your codebase has hundreds of files.
+Claude doesn't know which ones matter for what you're doing.
+
+Without this plugin:
+  Claude reads everything → slow, expensive, shallow understanding
+
+With this plugin:
+  1. A graph maps every function, class, import, and dependency
+  2. When you ask Claude to review code or make changes,
+     it checks the graph first: "What changed? What depends on it?"
+  3. Claude reads only those specific files
+  4. Result: faster, cheaper, and actually better reviews
+     (because it sees the full blast radius, not just the diff)
+```
+
+**You don't change how you work.** You still talk to Claude exactly the same way. It just has a map now, so it doesn't get lost.
+
+---
+
+## Benchmarks
+
+All numbers from real tests on 3 production open-source repos — not toy examples.
+
+### Code Reviews: 6.8x Token Reduction
+
+Tested across 6 real git commits. The graph replaces reading entire files with a compact structural summary (156–207 tokens) that includes blast radius, test coverage gaps, and dependency chains.
+
+| Repo | Size | Standard Approach | With Graph | Savings | Review Quality |
+|------|-----:|------------------:|-----------:|--------:|:-:|
+| [httpx](https://github.com/encode/httpx) | 125 files | 12,507 tokens | 458 tokens | **26.2x** | 9.0 vs 7.0 |
+| [FastAPI](https://github.com/fastapi/fastapi) | 2,915 files | 5,495 tokens | 871 tokens | **8.1x** | 8.5 vs 7.5 |
+| [Next.js](https://github.com/vercel/next.js) | 27,732 files | 21,614 tokens | 4,457 tokens | **6.0x** | 9.0 vs 7.0 |
+| **Average** | | **13,205** | **1,928** | **6.8x** | **8.8 vs 7.2** |
+
+> "Standard approach" = reading all changed files + diff (what you'd do without the graph). Quality scored on accuracy, completeness, bug-catching, and actionable insight (1–10 scale).
+
+### Live Coding Tasks: 14.1x Average, 49x Peak
+
+An AI agent performed 6 real coding tasks (adding features, fixing bugs) across the same repos. The graph told it which files to read and which to skip.
+
+| Task | Repo | With Graph | Without Graph | Savings | Files Skipped |
+|------|------|--------:|-----------:|--------:|---:|
+| Add rate limiter | httpx | 14,090 | 64,666 | 4.6x | 58 |
+| Fix streaming bug | httpx | 14,090 | 64,666 | 4.6x | 59 |
+| Add rate limiter | FastAPI | 37,217 | 138,585 | 3.7x | 1,120 |
+| Fix streaming bug | FastAPI | 36,986 | 138,585 | 3.7x | 1,121 |
+| Add rate limiter | Next.js | 15,049 | 739,352 | **49.1x** | ~16,000 |
+| Fix streaming bug | Next.js | 16,135 | 739,352 | **45.8x** | ~16,000 |
+
+The graph pointed to exactly the right files **100% of the time** — zero false leads across all tasks. The bigger your repo, the bigger the savings.
+
+---
+
+## Usage
+
+### Slash Commands (inside Claude Code)
+
+| Command | What it does |
+|---------|-------------|
+| `/code-review-graph:build-graph` | Build or rebuild the code graph (~10s for 500 files) |
+| `/code-review-graph:review-delta` | Review only what changed since last commit |
+| `/code-review-graph:review-pr` | Full PR review with blast-radius analysis |
 
 ### CLI
 
 ```bash
-code-review-graph init       # Set up .mcp.json for Claude Code
-code-review-graph build      # Parse your entire codebase
-code-review-graph update     # Incremental update (only changed files)
-code-review-graph watch      # Real-time auto-updates as you code
-code-review-graph status     # Show graph statistics
-code-review-graph visualize  # Interactive HTML graph visualization
-code-review-graph serve      # Start MCP server
+code-review-graph install     # Register MCP server with Claude Code
+code-review-graph build       # Parse your entire codebase
+code-review-graph update      # Incremental update (only changed files)
+code-review-graph status      # Show graph statistics
+code-review-graph watch       # Real-time auto-updates as you code
+code-review-graph visualize   # Interactive HTML graph visualization
+code-review-graph serve       # Start MCP server manually
 ```
 
-### Use the skills
+### MCP Tools (Claude uses these automatically)
 
-```
-/code-review-graph:build-graph    # Parse your codebase (~10s for 500 files)
-/code-review-graph:review-delta   # Review only what changed
-/code-review-graph:review-pr      # Full PR review with blast-radius
-```
-
-**Before**: Claude reads 200 files, uses ~150k tokens.
-**After**: Claude reads 8 changed + 12 impacted files, uses ~25k tokens.
-
-For detailed usage instructions, see [docs/USAGE.md](docs/USAGE.md).
-
----
-
-## 🛠️ How It Works
-
-```
-┌─────────────────────────────────────────────┐
-│                Claude Code                   │
-│  ┌─────────┐  ┌──────────┐  ┌────────────┐ │
-│  │  Skills  │  │  Hooks   │  │   Agent    │ │
-│  └────┬────┘  └────┬─────┘  └─────┬──────┘ │
-│       │            │               │         │
-│       └────────────┼───────────────┘         │
-│                    │                         │
-│              ┌─────▼─────┐                   │
-│              │ MCP Server │                  │
-│              └─────┬─────┘                   │
-└────────────────────┼────────────────────────┘
-                     │
-         ┌───────────┼───────────┐
-         │           │           │
-    ┌────▼───┐  ┌───▼────┐  ┌──▼──────────┐
-    │ Parser │  │ Graph  │  │ Incremental │
-    │(sitter)│  │(SQLite)│  │  (git diff) │
-    └────────┘  └────────┘  └─────────────┘
-```
-
-| Component | File | Role |
-|-----------|------|------|
-| **Parser** | `code_review_graph/parser.py` | Tree-sitter multi-language AST parser. Extracts nodes and relationships. |
-| **Graph** | `code_review_graph/graph.py` | SQLite-backed knowledge graph with NetworkX for traversal queries. |
-| **Incremental** | `code_review_graph/incremental.py` | Git-aware delta detection. Re-parses only changed files + dependents. |
-| **MCP Server** | `code_review_graph/main.py` | Exposes 8 tools to Claude Code via the Model Context Protocol. |
-| **Visualization** | `code_review_graph/visualization.py` | D3.js interactive graph visualization generator. |
-| **Skills** | `skills/` | Three review workflows: `build-graph`, `review-delta`, `review-pr`. |
-| **Hooks** | `hooks/` | Auto-updates the graph on file edits and git commits. |
-
-For the full architecture walkthrough, see [docs/architecture.md](docs/architecture.md).
-
----
-
-## 📚 Deep Dive
-
-Everything beyond the quick start lives in the [docs/](docs/) folder. Start with [docs/USAGE.md](docs/USAGE.md) for the full workflow guide.
-
-| Document | What's inside |
-|----------|---------------|
-| [Usage Guide](docs/USAGE.md) | Installation, workflows, and tips |
-| [Commands Reference](docs/COMMANDS.md) | All MCP tools, skills, and CLI commands |
-| [Features & Changelog](docs/FEATURES.md) | What's included and what changed |
-| [Architecture](docs/architecture.md) | System design and data flow |
-| [Schema](docs/schema.md) | Graph node/edge types and SQLite tables |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and fixes |
-| [LLM-Optimized Reference](docs/LLM-OPTIMIZED-REFERENCE.md) | Token-optimized reference used by Claude Code |
-| [Roadmap](docs/ROADMAP.md) | Planned features |
-| [Legal & Privacy](docs/LEGAL.md) | License and data handling |
-
----
-
-## Graph Schema
-
-### Nodes
-
-| Kind | Properties |
-|------|-----------|
-| **File** | path, language, last_parsed_hash, size |
-| **Class** | name, file, line_start, line_end, modifiers |
-| **Function** | name, file, class (nullable), line_start, line_end, params, return_type, is_test |
-| **Type** | name, file, kind (enum, interface, etc.) |
-| **Test** | name, file, tested_function |
-
-### Edges
-
-| Kind | Direction | Meaning |
-|------|-----------|---------|
-| **CALLS** | Function -> Function | Function calls another function |
-| **IMPORTS_FROM** | File -> File/Module | File imports from another |
-| **INHERITS** | Class -> Class | Class extends another |
-| **IMPLEMENTS** | Class -> Interface | Class implements an interface |
-| **CONTAINS** | File/Class -> Function/Class | Containment hierarchy |
-| **TESTED_BY** | Function -> Test | Function has a test |
-| **DEPENDS_ON** | Node -> Node | General dependency |
-
-For the full schema documentation, see [docs/schema.md](docs/schema.md).
-
----
-
-## MCP Tools
-
-| Tool | Description |
+| Tool | What it does |
 |------|-------------|
-| `build_or_update_graph_tool` | Full or incremental graph build |
-| `get_impact_radius_tool` | Blast radius analysis for changed files |
-| `query_graph_tool` | Predefined relationship queries (callers, callees, tests, imports) |
-| `get_review_context_tool` | Token-optimized review context with source snippets |
-| `semantic_search_nodes_tool` | Search code entities by name/keyword/semantic similarity |
+| `build_or_update_graph_tool` | Build or incrementally update the graph |
+| `get_impact_radius_tool` | Show blast radius of changed files |
+| `get_review_context_tool` | Token-optimized review context with structural summary |
+| `query_graph_tool` | Find callers, callees, tests, imports, inheritance |
+| `semantic_search_nodes_tool` | Search code entities by name or meaning |
 | `embed_graph_tool` | Compute vector embeddings for semantic search |
-| `list_graph_stats_tool` | Graph statistics and health check |
-| `get_docs_section_tool` | Retrieve specific documentation sections (minimal tokens) |
-
-For usage details and examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
+| `list_graph_stats_tool` | Graph size and health check |
+| `get_docs_section_tool` | Retrieve docs sections with minimal tokens |
 
 ---
 
-## Supported Languages
+## Features
 
-| Language | Extensions | Status |
-|----------|-----------|--------|
-| Python | `.py` | Full support |
-| TypeScript | `.ts`, `.tsx` | Full support |
-| JavaScript | `.js`, `.jsx` | Full support |
-| Go | `.go` | Full support |
-| Rust | `.rs` | Full support |
-| Java | `.java` | Full support |
-| C# | `.cs` | Full support |
-| Ruby | `.rb` | Full support |
-| Kotlin | `.kt` | Full support |
-| Swift | `.swift` | Full support |
-| PHP | `.php` | Full support |
-| C/C++ | `.c`, `.h`, `.cpp`, `.hpp` | Full support |
+| Feature | Details |
+|---------|---------|
+| **Incremental updates** | Only re-parses changed files. Updates take <2s after initial build. |
+| **12 languages** | Python, TypeScript, JavaScript, Go, Rust, Java, C#, Ruby, Kotlin, Swift, PHP, C/C++ |
+| **Blast-radius analysis** | See exactly which functions, classes, and files are impacted by any change |
+| **Auto-update hooks** | Graph stays current on every file edit and git commit — zero maintenance |
+| **Semantic search** | Optional vector embeddings with sentence-transformers |
+| **Interactive visualization** | D3.js graph with edge-type toggles and search |
+| **No external DB** | Everything in a local SQLite file — no Neo4j, no cloud, no config |
+| **Watch mode** | Real-time graph updates as you code |
+
+---
+
+## It Just Works
+
+After the initial `build`, you don't need to think about this plugin. Here's what happens automatically:
+
+- **You edit a file** → hook updates the graph in <2s
+- **You make a commit** → hook updates the graph
+- **You ask Claude to review code** → Claude checks the graph, reads only impacted files
+- **You ask Claude to add a feature** → Claude uses the graph to find exactly where to make changes
+
+No configuration. No maintenance. No commands to remember.
 
 ---
 
 ## Configuration
 
-Create a `.code-review-graphignore` file in your repo root to exclude paths:
+Optionally create `.code-review-graphignore` in your repo root to exclude paths:
 
 ```
-# Ignore generated files
 generated/**
 *.generated.ts
-*.pb.go
-
-# Ignore vendor
 vendor/**
-third_party/**
+node_modules/**
 ```
 
----
-
-## 🧪 Testing
+For semantic search (optional, requires extra dependencies):
 
 ```bash
-pip install -e ".[dev]"
-pytest
-ruff check code_review_graph/
+pip install code-review-graph[embeddings]
 ```
 
-47 tests covering parser, graph storage, MCP tools, and multi-language support (Go, Rust, Java).
+Then ask Claude to "embed the code graph" — this enables searching by meaning, not just name.
 
 ---
 
-## 🤝 Contributing
-
-### Adding a new language
-
-1. Add the extension mapping in `code_review_graph/parser.py` → `EXTENSION_TO_LANGUAGE`
-2. Add node type mappings in `_CLASS_TYPES`, `_FUNCTION_TYPES`, `_IMPORT_TYPES`, `_CALL_TYPES`
-3. Test with a sample file in that language
-4. Submit a PR
-
-### Development setup
+## Contributing
 
 ```bash
 git clone https://github.com/tirth8205/code-review-graph.git
@@ -263,27 +212,21 @@ pip install -e ".[dev]"
 pytest
 ```
 
----
-
-## Comparison
-
-| Feature | code-review-graph | code-graph-rag | CocoIndex |
-|---------|:-:|:-:|:-:|
-| Review-first design | Yes | No | No |
-| Claude Code integration | Native | No | No |
-| Incremental updates | Yes | Partial | Yes |
-| No external DB needed | Yes (SQLite) | No (Neo4j) | No |
-| Auto-update hooks | Yes | No | No |
-| Impact/blast radius | Yes | No | No |
-| Multi-language | 12+ languages | Python only | Varies |
-| Token-efficient reviews | Yes | No | No |
+**Adding a new language?** Edit `code_review_graph/parser.py` — add your extension to `EXTENSION_TO_LANGUAGE` and node type mappings to `_CLASS_TYPES`, `_FUNCTION_TYPES`, `_IMPORT_TYPES`, `_CALL_TYPES`. Then add a test fixture and submit a PR.
 
 ---
 
-## 📄 License
+## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">Built with ❤️ for better code reviews</p>
+<p align="center">
+<br>
+<strong>Try it now:</strong>
+<br><br>
+<code>pip install git+https://github.com/tirth8205/code-review-graph.git && code-review-graph install</code>
+<br><br>
+Build the graph once. Let Claude handle the rest.
+</p>
